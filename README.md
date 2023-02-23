@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# Park Tudor School Alumni Directory
 
 Alumni directory for Park Tudor School
 
