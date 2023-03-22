@@ -7,27 +7,55 @@ const CurrentFiltersBar = ({ appliedFilters, setAppliedFilters, numResults }) =>
 
     const [filterLabels, setFilterLabels] = useState([]);
 
-    const handleFilterDelete = (key, filter) => {
-        console.log(key, filter, appliedFilters);
-        appliedFilters[key] = appliedFilters[key].filter(item => item !== filter);
-        setFilterLabels(prev => prev.filter(item => item.filter !== filter));
-        setAppliedFilters({ ...appliedFilters, [key]: appliedFilters[key] });
+    const handleFilterDelete = (filterType, id) => {
+        setFilterLabels(prev => prev.filter(item => item.id !== id));
+        setAppliedFilters(prev => {
+            return {...prev, [filterType]: appliedFilters[filterType].filter(item => item.id !== id)}
+        })
     }
 
+
     useEffect(() => {
-        Object.keys(appliedFilters) && Object.keys(appliedFilters).forEach(key => {
-            switch (key) {
+        console.log(appliedFilters);
+        setFilterLabels([]);
+        Object.keys(appliedFilters) && Object.keys(appliedFilters).forEach(filterType => {
+            switch (filterType) {
                 case 'locations': {
-                    appliedFilters[key].forEach(country => {
-                        if (country !== 'United States') {
-                            setFilterLabels(prev => [...prev, { key: key, filter: country, label: country }]);
+                    appliedFilters[filterType].forEach(location => {
+                        if (location.country !== 'United States') {
+                            setFilterLabels(prev => [...prev, {
+                                filterType: filterType,
+                                id: location.id,
+                                label: location.country,
+                            }]);
+                        }
+                        else {
+                            setFilterLabels(prev => [...prev, {
+                                filterType: filterType,
+                                id: location.id,
+                                label: `${location.state}, ${location.country}`
+                            }]);
                         }
                     })
                     break;
                 }
-                case 'states': {
-                    appliedFilters[key].forEach(state => {
-                        setFilterLabels(prev => [...prev, { key: key, filter: state, label: `${state}, United States` }]);
+                case 'graduationRange': {
+                    appliedFilters[filterType].forEach(range => {
+                        setFilterLabels(prev => [...prev, {
+                            filterType: filterType,
+                            id: range.id,
+                            label: `Graduated between ${range.start} - ${range.end}`
+                        }]);
+                    })
+                    break;
+                }
+                case 'education': {
+                    appliedFilters[filterType].forEach(education => {
+                        setFilterLabels(prev => [...prev, {
+                            filterType: filterType,
+                            id: education.id,
+                            label: education.name
+                        }]);
                     })
                     break;
                 }
@@ -40,7 +68,7 @@ const CurrentFiltersBar = ({ appliedFilters, setAppliedFilters, numResults }) =>
 
     return (
         <Box sx={{ py: 2 }}>
-            <Grid container spacing={1.5}>
+            <Grid container spacing={1.5} rowSpacing={2}>
                 <Grid item xs={12} sm={12} md={4} lg={3} xl={3}>
                     <Typography variant="subtitle2" component="div" fontSize="1.15em">
                         Showing results: <span style={{ fontWeight: 'bold' }}>{numResults}</span>
@@ -48,11 +76,11 @@ const CurrentFiltersBar = ({ appliedFilters, setAppliedFilters, numResults }) =>
 
                 </Grid>
                 <Grid item xs={12} sm={12} md={8} lg={9} xl={9}>
-                    <Typography display='inline-block' variant="subtitle2" component="div" fontSize="1.15em">
+                    <Typography display='inline-block' variant="subtitle2" component="div" fontSize="1.15em" sx={{mr: 1}}>
                         Tags:
                     </Typography>
                     {filterLabels && filterLabels.map(filter => (
-                        <Chip key={filter.label} sx={{ ml: 0.75 }} label={filter.label} variant="outlined" onDelete={() => { handleFilterDelete(filter.key, filter.filter) }} />
+                        <Chip key={filter.id} sx={{ ml: 0.75, mb: 0.75 }} label={filter.label} variant="outlined" onDelete={() => { handleFilterDelete(filter.filterType, filter.id) }} />
                     ))}
                 </Grid>
 

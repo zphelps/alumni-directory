@@ -1,5 +1,15 @@
 import './App.css';
-import { BrowserRouter, Route, Routes, Navigate } from 'react-router-dom';
+import {
+  Routes,
+  Route,
+  Outlet,
+  Link,
+  useLocation,
+  useNavigate,
+  useParams,
+  BrowserRouter,
+  Navigate,
+} from "react-router-dom";
 import Home from './pages/home/Home';
 import SignUp from './pages/signup/SignUp';
 import Login from './pages/login/Login';
@@ -12,6 +22,11 @@ import { pink, purple } from '@mui/material/colors';
 import AppLayout from './components/AppLayout';
 import { alpha } from '@mui/material/styles';
 import { LicenseInfo } from '@mui/x-license-pro';
+import {EditInfoCardModal} from "./pages/alumnusDetails/components/edit_profile_modals/EditInfoCardModal";
+import {EditBioCardModal} from "./pages/alumnusDetails/components/edit_profile_modals/EditBioCardModal";
+import {EditExperienceCardModal} from "./pages/alumnusDetails/components/edit_profile_modals/EditExperienceCardModal";
+import {EditEducationCardModal} from "./pages/alumnusDetails/components/edit_profile_modals/EditEducationCardModal";
+import {EditContactCardModal} from "./pages/alumnusDetails/components/edit_profile_modals/EditContactCardModal";
 
 LicenseInfo.setLicenseKey('103fcbf801e45b441ba49d79f5177eeeTz01Nzk1NCxFPTE3MDU2MzgzNTc5OTMsUz1wcm8sTE09c3Vic2NyaXB0aW9uLEtWPTI=');
 
@@ -40,27 +55,31 @@ const theme = createTheme({
 function App() {
   const { authIsReady, user } = useAuthContext()
   const [query, setQuery] = useState('')
+  let location = useLocation();
+  const background = location.state && location.state.background;
 
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
       {authIsReady && (
-        <BrowserRouter>
-          {/* <Routes>
-            <Route exact path="/" element={user ? <Home /> : <Navigate to="/login" />} />
-            <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
-            <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/" />} />
-            <Route path="/alumni/:id" element={user ? <AlumnusDetails /> : <Navigate to="/login" />} />
-          </Routes> */}
           <AppLayout setQuery={setQuery} query={query}>
-            <Routes>
+            <Routes location={background || location}>
               <Route exact path="/" element={user ? <Home query={query} setQuery={setQuery} /> : <Navigate to="/login" />} />
               <Route path="/login" element={!user ? <Login /> : <Navigate to="/" />} />
               <Route path="/signup" element={!user ? <SignUp /> : <Navigate to="/" />} />
-              <Route path="/alumni/:id" element={user ? <AlumnusDetails /> : <Navigate to="/login" />} />
+              <Route path="/alumni/:id" element={user ? <AlumnusDetails isEditable={false}/> : <Navigate to="/login" />} />
+              <Route path="/alumni/:id/edit" element={<AlumnusDetails isEditable={true}/>} />
             </Routes>
+            {background && (
+                <Routes>
+                  <Route path="/alumni/:id/edit/info-card" element={<EditInfoCardModal />} />
+                  <Route path="/alumni/:id/edit/bio" element={<EditBioCardModal />} />
+                  <Route path="/alumni/:id/edit/contact-info" element={<EditContactCardModal />} />
+                  <Route path="/alumni/:id/edit/experience/:experienceID?" element={<EditExperienceCardModal />} />
+                  <Route path="/alumni/:id/edit/education/:educationID?" element={<EditEducationCardModal />} />
+                </Routes>
+            )}
           </AppLayout>
-        </BrowserRouter>
       )}
     </ThemeProvider>
   );

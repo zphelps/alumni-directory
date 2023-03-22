@@ -62,7 +62,7 @@ const SignUp = () => {
                 >
                     <img src='https://static.wixstatic.com/media/07993d_7024241c65d47612e9103191295260f4.jpg/v1/fit/w_2500,h_1330,al_c/07993d_7024241c65d47612e9103191295260f4.jpg' alt="pt signature" style={{ width: "8em" }} />
                     <Typography component="h1" variant="h5" sx={{ pt: 3 }}>
-                        Sign in
+                        Sign up
                     </Typography>
                     <Box component="form" onSubmit={handleSubmit} sx={{ mt: 1 }}>
                         <Grid container spacing={2}>

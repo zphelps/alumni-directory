@@ -1,20 +1,37 @@
 import React from 'react';
-import { Card, CardContent, Typography, Box, Paper } from '@mui/material';
+import {Card, CardContent, Typography, Box, Paper, Stack} from '@mui/material';
 import { Link } from 'react-router-dom';
 import { useState } from 'react';
+import IconButton from "@mui/material/IconButton";
+import EditIcon from "@mui/icons-material/Edit";
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const AlumniBioCard = ({ alumnus }) => {
+const AlumniBioCard = ({ alumnus, isEditable }) => {
     const [expanded, setExpanded] = useState(alumnus.bio.length < 600);
 
+    const navigate = useNavigate();
+    const location = useLocation();
+
     return (
-        <Paper variant='outlined' sx={{ px: 2.5, py: 2, mb: 2, borderRadius: '8px' }}>
-            <Typography
-                variant="h6"
-                component="div"
-                fontWeight={600}
-            >
-                About
-            </Typography>
+        <Paper variant='outlined' sx={{ pl: 2.5, pr: 1, pt: 1.5, pb: 2, mb: 2, borderRadius: '8px' }}>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography
+                    variant="h6"
+                    component="div"
+                    fontWeight={600}
+                >
+                    About
+                </Typography>
+                {isEditable && (
+                    <Stack direction="column">
+                        <IconButton onClick={() => navigate(`/alumni/${alumnus.id}/edit/bio`,
+                            { state: { background: location } })}>
+                            <EditIcon/>
+                        </IconButton>
+                    </Stack>
+                )}
+            </Stack>
+
             <Typography
                 variant="body2"
                 component="div"

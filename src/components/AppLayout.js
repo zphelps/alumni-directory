@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState} from 'react';
 import AppBar from '@mui/material/AppBar';
 import Box from '@mui/material/Box';
 import Toolbar from '@mui/material/Toolbar';
@@ -14,13 +14,16 @@ import { Divider } from '@mui/material';
 import PersonIcon from '@mui/icons-material/AccountCircle';
 import PTLogo from '../assets/pt_logo.jpg';
 import SearchBar from './SearchBar';
+import {useNavigate} from "react-router-dom";
 
 const settings = ['Edit Profile', 'Logout'];
 
 const AppLayout = ({ children, query, setQuery }) => {
     const { user } = useAuthContext()
-    const [anchorElUser, setAnchorElUser] = React.useState(null);
+    const [anchorElUser, setAnchorElUser] = useState(null);
     const { logout, error, isPending } = useLogout()
+
+    const navigate = useNavigate();
 
     const handleOpenUserMenu = (event) => {
         setAnchorElUser(event.currentTarget);
@@ -32,8 +35,9 @@ const AppLayout = ({ children, query, setQuery }) => {
 
     const handleMenuClick = (setting) => {
         switch (setting) {
-            case 'Profile':
+            case 'Edit Profile':
                 console.log('Profile')
+                navigate(`/alumni/${user.uid}/edit`)
                 break;
             case 'Account':
                 console.log('Account')
@@ -52,7 +56,7 @@ const AppLayout = ({ children, query, setQuery }) => {
     }
 
     return (
-        <Box sx={{ height: 'calc(100% - 80px)' }}>
+        <Box sx={{ height: 'calc(100% - 145px)' }}>
             {user && (
                 <AppBar position="sticky" elevation={0} sx={{ borderBottom: '1px solid lightGrey', py: 1, mb: 1.5, background: '#fff' }}>
                     <Toolbar

@@ -1,10 +1,9 @@
 import React from 'react'
-import { Link } from 'react-router-dom'
 import { Container } from '@mui/material';
 import AlumniList from '../../components/AlumniList';
 import { useCollection } from '../../hooks/useCollection'
 import { useEffect } from 'react';
-import { Grid, Box } from '@mui/material';
+import { Grid } from '@mui/material';
 import FilterCard from '../alumnusDetails/components/FilterCard';
 import { useState } from 'react';
 import Skeleton from '@mui/material/Skeleton';
@@ -12,7 +11,9 @@ import { Paper } from '@mui/material';
 import CurrentFiltersBar from '../../components/CurrentFiltersBar';
 
 export default function Home({ query, setQuery }) {
-    const { documents: alumni, isPending, error } = useCollection('alumniProfiles')
+    const { documents: alumni, isPending } = useCollection('alumniProfiles', [
+            ['isActive', '==', true]
+        ]);
 
     const [filteredAlumni, setFilteredAlumni] = useState([])
     const [appliedFilters, setAppliedFilters] = useState({});
@@ -20,8 +21,7 @@ export default function Home({ query, setQuery }) {
 
     const handleApplyFilters = () => {
         if (Object.keys(queuedFilters).length > 0) {
-            console.log(queuedFilters);
-            if (queuedFilters.location.country === 'United States' && !queuedFilters.location.state) {
+            if (queuedFilters.location && queuedFilters.location.country === 'United States' && !queuedFilters.location.state) {
                 return 'Please select a state.'
             }
             Object.keys(queuedFilters).forEach(element => {
@@ -29,7 +29,27 @@ export default function Home({ query, setQuery }) {
                     case 'location': {
                         setAppliedFilters(prev => ({
                             ...prev,
-                            locations: prev.locations ? [...prev.locations, queuedFilters.location] : [queuedFilters.location]
+                            locations: prev.locations ?
+                                [...prev.locations, queuedFilters.location]
+                                : [queuedFilters.location]
+                        }));
+                        break;
+                    }
+                    case 'graduationRange': {
+                        setAppliedFilters(prev => ({
+                            ...prev,
+                            graduationRange: prev.graduationRange ?
+                                [...prev.graduationRange, queuedFilters.graduationRange]
+                                : [queuedFilters.graduationRange]
+                        }));
+                        break;
+                    }
+                    case 'education': {
+                        setAppliedFilters(prev => ({
+                            ...prev,
+                            education: prev.education ?
+                                [...prev.education, queuedFilters.education]
+                                : [queuedFilters.education]
                         }));
                         break;
                     }
@@ -54,12 +74,13 @@ export default function Home({ query, setQuery }) {
         if (localStorage.getItem('query') && localStorage.getItem('query').length > 1) {
             setQuery(localStorage.getItem('query'));
         }
-    }, [])
+    }, [setQuery])
 
     useEffect(() => {
         if (alumni) {
             if (query.length > 0) {
                 localStorage.setItem('query', query);
+                setAppliedFilters({});
                 setFilteredAlumni(alumni.filter(doc => {
                     if (!query || query.length === 0) return true
                     return doc.firstName.toLowerCase().includes(query.toLowerCase())
@@ -69,10 +90,33 @@ export default function Home({ query, setQuery }) {
                 localStorage.setItem('appliedFilters', JSON.stringify(appliedFilters));
                 localStorage.setItem('query', '');
                 setFilteredAlumni(alumni.filter(doc => {
-                    if (appliedFilters.countries) {
-                        if (appliedFilters.countries.length === 0) return true
-                        return appliedFilters.countries.includes(doc.country)
+
+                    if (appliedFilters.locations && appliedFilters.locations.length !== 0) {
+                        if (appliedFilters.locations.length === 0) return true
+                        return appliedFilters.locations.some(location => {
+                            if (location.country === 'United States') {
+                                return location.state === doc.state
+                            }
+                            else {
+                                return location.country === doc.country
+                            }
+                        })
                     }
+                    if(appliedFilters.graduationRange && appliedFilters.graduationRange?.length !== 0) {
+                        if (appliedFilters.graduationRange.length === 0) return true
+                        return appliedFilters.graduationRange.some(range => {
+                            return doc.graduationYear >= range.start && doc.graduationYear <= range.end
+                        })
+                    }
+                    if(appliedFilters.education && appliedFilters.education?.length !== 0) {
+                        if (appliedFilters.education.length === 0) return true
+                        return appliedFilters.education.some(education => {
+                            return doc.education.some(edu => {
+                                return edu.school.name === education.name
+                            })
+                        })
+                    }
+
                     return true
                 }))
             }

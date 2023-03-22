@@ -20,16 +20,16 @@ const FilterLocationAccordion = ({ queuedFilters, setQueuedFilters }) => {
     }, [queuedFilters])
 
     return (
-        <Accordion elevation={0} sx={{ m: 0 }}>
+        <Accordion disableGutters elevation={0} sx={{ m: 0 }}>
             <AccordionSummary
                 expandIcon={<ExpandMoreIcon />}
                 aria-controls="panel1a-content"
                 id="panel1a-header"
                 sx={{ m: 0, p: 0 }}
             >
-                <Typography variant='subtitle' color='secondary'>Location</Typography>
+                <Typography variant='subtitle'>Location</Typography>
             </AccordionSummary>
-            <AccordionDetails sx={{ p: 0 }}>
+            <AccordionDetails sx={{ p: 0, mb: 2 }}>
                 <Autocomplete
                     id="country-select"
                     onChange={(_, option) => {

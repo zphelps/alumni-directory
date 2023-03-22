@@ -8,51 +8,29 @@ import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import FilterLocationAccordion from './FilterLocationAccordion';
 import FilterGraduationAccordion from './FilterGraduationAccordion';
 import { useState } from 'react';
+import FilterEducationAccordion from './FilterEducationAccordion';
 
 const FilterCard = ({ queuedFilters, setQueuedFilters, handleApplyFilters }) => {
     const [error, setError] = useState(null);
 
     return (
-        <Paper variant='outlined' sx={{ pt: 0, pb: 0, px: 2.5, borderRadius: '8px' }}>
-            <Accordion expanded={true} elevation={0} disableGutters sx={{ m: 0, p: 0 }}>
-                <AccordionSummary
-                    expandIcon={<ExpandMoreIcon />}
-                    aria-controls="panel1a-content"
-                    id="panel1a-header"
-                    sx={{ m: 0, p: 0 }}
-                >
-                    <Typography variant='h6' fontWeight={600}>Filter</Typography>
-                </AccordionSummary>
-                <AccordionDetails sx={{ pb: 2.5, px: 0, pt: 0 }}>
-                    <FilterLocationAccordion
-                        queuedFilters={queuedFilters}
-                        setQueuedFilters={setQueuedFilters}
-                    />
-                    <FilterGraduationAccordion
-                        setQueuedFilters={setQueuedFilters}
-                    />
-                    <Accordion elevation={0} sx={{ m: 0 }}>
-                        <AccordionSummary
-                            expandIcon={<ExpandMoreIcon />}
-                            aria-controls="panel1a-content"
-                            id="panel1a-header"
-                            sx={{ m: 0, p: 0 }}
-                        >
-                            <Typography variant='subtitle'>Education</Typography>
-                        </AccordionSummary>
-                        <AccordionDetails>
-                            <Typography>
-                                Lorem ipsum dolor sit amet, consectetur adipiscing elit. Suspendisse
-                                malesuada lacus ex, sit amet blandit leo lobortis eget.
-                            </Typography>
-                        </AccordionDetails>
-                    </Accordion>
-                    <Button onClick={() => setError(handleApplyFilters())} variant='contained' disableElevation sx={{ mt: 2, py: 0.5, px: 1.5, mr: 0.75 }}>Apply</Button>
-                    <Button onClick={() => setQueuedFilters({})} color='secondary' variant='outlined' disableElevation sx={{ mt: 2, py: 0.5, px: 1.5 }}>Clear</Button>
-                    {error && <Typography sx={{ pt: 2 }} color="error">{error}</Typography>}
-                </AccordionDetails>
-
-            </Accordion>
+        <Paper variant='outlined' sx={{ p: 2.5, borderRadius: '8px' }}>
+            <Typography variant='h6' fontWeight={600}>Filter</Typography>
+            <FilterLocationAccordion
+                queuedFilters={queuedFilters}
+                setQueuedFilters={setQueuedFilters}
+            />
+            <FilterGraduationAccordion
+                queuedFilters={queuedFilters}
+                setQueuedFilters={setQueuedFilters}
+            />
+            <FilterEducationAccordion
+                queuedFilters={queuedFilters}
+                setQueuedFilters={setQueuedFilters}
+            />
+            <Button onClick={() => setError(handleApplyFilters())} variant='contained' disableElevation sx={{ mt: 2, py: 0.5, px: 1.5, mr: 0.75 }}>Apply</Button>
+            <Button onClick={() => setQueuedFilters({})} color='secondary' variant='outlined' disableElevation sx={{ mt: 2, py: 0.5, px: 1.5 }}>Clear</Button>
+            {error && <Typography sx={{ pt: 2 }} color="error">{error}</Typography>}
         </Paper>
     );
 }

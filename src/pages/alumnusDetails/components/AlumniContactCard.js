@@ -1,5 +1,5 @@
 import React from 'react';
-import { Card, CardContent, CardHeader, ListItem, Paper, Typography } from '@mui/material';
+import {Card, CardContent, CardHeader, ListItem, Paper, Stack, Typography} from '@mui/material';
 import { useState } from 'react';
 import EmailIcon from '@mui/icons-material/Email';
 import PhoneIcon from '@mui/icons-material/Phone';
@@ -8,23 +8,37 @@ import FacebookIcon from '@mui/icons-material/Facebook';
 import TwitterIcon from '@mui/icons-material/Twitter';
 import InstagramIcon from '@mui/icons-material/Instagram';
 import LinkIcon from '@mui/icons-material/Link';
-import Grid from '@mui/material/Grid';
-
+import EditIcon from '@mui/icons-material/Edit';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import ListItemButton from '@mui/material/ListItemButton';
+import IconButton from "@mui/material/IconButton";
+import AddIcon from "@mui/icons-material/Add";
+import {useLocation, useNavigate} from "react-router-dom";
+import {GitHub} from "@mui/icons-material";
 
-const AlumniContactCard = ({ alumnus }) => {
+const AlumniContactCard = ({ alumnus, isEditable }) => {
+    const navigate = useNavigate();
+    const location = useLocation();
+
     return (
         <Paper variant='outlined' sx={{ px: 2.5, py: 2, mb: 2, borderRadius: '8px' }}>
-            <Typography
-                variant="h6"
-                component="div"
-                fontWeight={600}
-                sx={{ pt: 1 }}
-            >
-                Contact
-            </Typography>
+            <Stack direction="row" justifyContent="space-between" alignItems="center">
+                <Typography
+                    variant="h6"
+                    component="div"
+                    fontWeight={600}
+                >
+                    Contact
+                </Typography>
+                {isEditable && (
+                    <Stack direction="column">
+                        <IconButton onClick={() => navigate(`/alumni/${alumnus.id}/edit/contact-info`,
+                            { state: { background: location } })}>
+                            <EditIcon/>
+                        </IconButton>
+                    </Stack>
+                )}
+            </Stack>
             {alumnus.contactInfo.email && (
                 <ListItem disablePadding>
                     <ListItemIcon>
@@ -88,6 +102,17 @@ const AlumniContactCard = ({ alumnus }) => {
                     <ListItemText
                         primary="Instagram"
                         secondary={<a href={alumnus.contactInfo.instagramURL}>{alumnus.contactInfo.instagramURL}</a>}
+                    />
+                </ListItem>
+            )}
+            {alumnus.contactInfo.githubURL && (
+                <ListItem disablePadding>
+                    <ListItemIcon sx={{ inset: 0, m: 0, p: 0 }}>
+                        <GitHub />
+                    </ListItemIcon>
+                    <ListItemText
+                        primary="Github"
+                        secondary={<a href={alumnus.contactInfo.githubURL}>{alumnus.contactInfo.githubURL}</a>}
                     />
                 </ListItem>
             )}
